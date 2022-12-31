@@ -1,0 +1,6 @@
+id=app_process_wrapper
+name=app_process wrapper
+author=HuskyDG
+version=1.0
+versionCode=1
+description=app_process wrapper for Bluestacks to run Zygisk

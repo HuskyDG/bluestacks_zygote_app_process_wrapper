@@ -1,0 +1,3 @@
+allow zygote zygote process setcurrent
+allow zygote zygote process dyntransition
+allow zygote * filesystem unmount

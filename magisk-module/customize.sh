@@ -1,0 +1,11 @@
+mkdir -p "$MODPATH/system/bin"
+api_level_arch_detect
+[ "$IS64BIT" == true ] && app_process="app_process64" || app_process="app_process32"
+[ ! -d "$MODPATH/libs/$ABI" ] && abort "! $ABI not supported"
+cp -af "$MODPATH/libs/$ABI/app_process" "$MODPATH/system/bin/$app_process"
+cp -af "$MODPATH/libs/$ABI32/app_process" "$MODPATH/system/bin/app_process32"
+rm -rf "$MODPATH/libs"
+chcon -R u:object_r:system_file:s0 "$MODPATH/system/bin"
+chmod -R 755 "$MODPATH/system/bin"
+magisk --clone-attr "/system/bin/$app_process" "$MODPATH/system/bin/$app_process"
+magisk --clone-attr "/system/bin/app_process32" "$MODPATH/system/bin/app_process32"
