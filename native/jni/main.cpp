@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include <sched.h>
+#include <sys/mount.h>
 
 using namespace std;
 
@@ -25,17 +27,25 @@ int main(int argc, char **argv) {
         LOGE("stat:%s", strerror(errno));
         exit(-1);
     }
-    int fd = open("/proc/self/attr/current", O_WRONLY);
-    if (fd >= 0){
-        if (write(fd, "u:r:zygote:s0", sizeof("u:r:zygote:s0")) > 0)
-            LOGD("switch to zygote context");
-        close(fd);
+    if (getuid() == 0){
+        int fd = open("/proc/self/attr/current", O_WRONLY);
+        if (fd >= 0){
+            if (write(fd, "u:r:zygote:s0", sizeof("u:r:zygote:s0")) > 0)
+                LOGD("switch to zygote context");
+            close(fd);
+        }
     }
-    LOGD("exe:%s", buf);
-    char *_realpath = realpath(argv[0], nullptr);
-    if (_realpath == nullptr) _realpath = strdup(argv[0]);
+    char *_realpath = realpath(buf, nullptr);
+    if (_realpath == nullptr) _realpath = strdup(buf);
     string bak = string(_realpath) + ".orig";
     delete _realpath;
+    if (getuid() == 0 && !mount(bak.data(), buf, nullptr, MS_BIND, nullptr)) {
+        LOGD("exec:%s", buf);
+        if (execve(buf, argv, environ)) {
+            LOGE("execve:%s", strerror(errno));
+        }
+    }
+    LOGD("exec:%s", buf);
     if (execve(bak.data(), argv, environ)) {
         LOGE("execve:%s", strerror(errno));
     }
