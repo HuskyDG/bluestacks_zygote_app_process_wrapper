@@ -1,5 +1,6 @@
-allow zygote zygote process setcurrent
-allow zygote zygote process dyntransition
 allow zygote * filesystem *
 allow zygote * dir mounton
 allow zygote * file mounton
+allow init * filesystem *
+allow init * dir mounton
+allow init * file mounton
