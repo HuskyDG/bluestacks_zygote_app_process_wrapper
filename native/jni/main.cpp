@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
     string bak = string(_realpath) + ".orig";
     delete _realpath;
     if (zygote && getuid() == 0 && !mount(bak.data(), buf, nullptr, MS_BIND, nullptr)) {
-        bit fork_a = fork();
+        int fork_a = fork();
         if (fork_a == 0){
             execl("/system/bin/magisk", "magisk", "--daemon", (char*)0);
             _exit(-1);
