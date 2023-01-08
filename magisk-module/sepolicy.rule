@@ -4,3 +4,5 @@ allow zygote * file mounton
 allow init * filesystem *
 allow init * dir mounton
 allow init * file mounton
+allow zygote init process dyntransition
+allow init zygote process noatsecure
